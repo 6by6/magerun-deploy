@@ -1,6 +1,6 @@
 require 'capistrano/ext/multistage'
 
-set :stage_dir,   "app/config/deploy"
+set :stage_dir,   "config/deploy"
 
 # build a list of available stages
 stages = []

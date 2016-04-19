@@ -18,7 +18,8 @@
             ["src/Gemfile", "Gemfile"],
             ["src/Capfile", "Capfile"],
             ["src/app/config/common-deploy.rb", "app/config/common-deploy.rb"],
-            ["src/app/config/deploy.rb.dist", "app/config/deploy.rb.dist"]
+            ["src/app/config/deploy.rb.dist", "app/config/deploy.rb.dist"],
+            ["src/app/config/deploy/example-stage.rb.dist", "app/config/deploy/example-stage.rb.dist"]
         ]
     }
 }

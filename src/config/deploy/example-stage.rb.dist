@@ -1,5 +1,5 @@
 set :deploy_to, "ABSOLUTE DIR NAME TO DEPLOY TO"
 set :branch, 'GIT BRANCH TO DEPLOY'
-set :deploy_via, :copy # codebase deploy method
+set :user, 'SSH USER'
 
-server 'IP', user: 'SSH USER', roles: %w{app}
+server 'IP', :app

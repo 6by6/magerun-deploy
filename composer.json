@@ -8,5 +8,15 @@
         }
     ],
     "minimum-stability": "dev",
-    "require": {}
+    "require": {
+
+    },
+    "extra": {
+        "map": [
+            ["src/Gemfile", "Gemfile"],
+            ["src/Capfile", "Capfile"],
+            ["src/config/common-deploy.rb", "config/common-deploy.rb"],
+            ["src/config/deploy.rb.dist", "config/deploy.rb.dist"]
+        ]
+    }
 }

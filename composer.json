@@ -1,0 +1,12 @@
+{
+    "name": "sixbysix/deploy",
+    "description": "A base deployment package for our Magento projects",
+    "authors": [
+        {
+            "name": "daniel",
+            "email": "daniel@sixbysix.co.uk"
+        }
+    ],
+    "minimum-stability": "dev",
+    "require": {}
+}

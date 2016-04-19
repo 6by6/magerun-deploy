@@ -2,12 +2,15 @@ require 'capistrano/ext/multistage'
 
 set :stage_dir,   "app/config/deploy"
 
+# build a list of available stages
+stages = []
+Dir::glob('app/config/deploy/*.rb') do |f|
+  stage_name = File.basename(f, ".*")
+  stages.push(stage_name.to_sym)
+end
 
+set :stages, %w(staging)
 
-
-
-set :stages,      %w()
-set :default_stage, ""
 
 set :application, ""
 set :repository,  ""

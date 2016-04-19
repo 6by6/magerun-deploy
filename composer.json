@@ -17,8 +17,8 @@
         "map": [
             ["src/Gemfile", "Gemfile"],
             ["src/Capfile", "Capfile"],
-            ["src/config/common-deploy.rb", "config/common-deploy.rb"],
-            ["src/config/deploy.rb.dist", "config/deploy.rb.dist"]
+            ["src/app/config/common-deploy.rb", "app/config/common-deploy.rb"],
+            ["src/app/config/deploy.rb.dist", "app/config/deploy.rb.dist"]
         ]
     }
 }

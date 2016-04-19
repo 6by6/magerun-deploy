@@ -1,6 +1,11 @@
 require 'capistrano/ext/multistage'
 
 set :stage_dir,   "app/config/deploy"
+
+
+
+
+
 set :stages,      %w()
 set :default_stage, ""
 

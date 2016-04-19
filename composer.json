@@ -1,6 +1,7 @@
 {
     "name": "sixbysix/deploy",
     "description": "A base deployment package for our Magento projects",
+    "type": "magento-module",
     "authors": [
         {
             "name": "daniel",
@@ -12,6 +13,7 @@
 
     },
     "extra": {
+        "magento-root-dir": "./",
         "map": [
             ["src/Gemfile", "Gemfile"],
             ["src/Capfile", "Capfile"],

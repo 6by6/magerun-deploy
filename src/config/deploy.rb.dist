@@ -1,4 +1,17 @@
-# set vars
+set :application, "APP NAME"
+set :repository, "GIT REPO URL"
 
-require 'common-deploy'
+set :app_symlinks, ["/media", "/var", "/sitemaps", "/staging"]
+set :app_shared_dirs, ["/app/etc", "/sitemaps", "/media", "/var", "/staging"]
+set :app_shared_files, ["/app/etc/local.xml", "/robots.txt"]
+
+after "deploy:update_code" do
+  # Run preprocessing scripts etc.
+  # e.g. run("cd #{release_path}; composer update")
+end
+
+load 'config/common-deploy'
+
+
+
 

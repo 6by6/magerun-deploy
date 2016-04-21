@@ -1,0 +1,5 @@
+set :deploy_to, "ABSOLUTE DIR NAME TO DEPLOY TO"
+set :branch, 'GIT BRANCH TO DEPLOY'
+set :user, 'SSH USER'
+
+server 'IP', :app

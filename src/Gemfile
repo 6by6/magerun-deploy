@@ -1,7 +1,6 @@
 source 'http://rubygems.org'
 
-gem 'net-ssh', '2.9.1'
-gem 'highline', '1.6.21'
-gem 'compass'
+gem 'net-ssh'
+gem 'highline'
 gem 'magentify'
 

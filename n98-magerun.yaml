@@ -1,0 +1,9 @@
+autoloaders:
+  SixBySix: %module%/src
+
+commands:
+  customCommands:
+    - SixBySix\Magerun\Deploy\Command\ConfigCommand
+    - SixBySix\Magerun\Deploy\Command\SetupCommand
+    - SixBySix\Magerun\Deploy\Command\WipeCommand
+

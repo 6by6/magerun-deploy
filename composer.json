@@ -1,25 +1,16 @@
 {
     "name": "sixbysix/deploy",
     "description": "A base deployment package for our Magento projects",
-    "type": "magento-module",
+    "type": "library",
     "authors": [
         {
-            "name": "daniel",
+            "name": "Daniel Ness",
             "email": "daniel@sixbysix.co.uk"
         }
     ],
     "minimum-stability": "dev",
-    "require": {
-
-    },
-    "extra": {
-        "magento-root-dir": "./",
-        "map": [
-            ["src/Gemfile", "Gemfile"],
-            ["src/Capfile", "Capfile"],
-            ["src/config/common-deploy.rb", "config/common-deploy.rb"],
-            ["src/config/deploy.rb.dist", "config/deploy.rb.dist"],
-            ["src/config/deploy/example-stage.rb.dist", "config/deploy/example-stage.rb.dist"]
-        ]
+    "require-dev": {
+        "n98/magerun": "^1.97",
+        "phpunit/phpunit": "^5.3"
     }
 }

@@ -108,30 +108,4 @@ class Capistrano
 
         return $info;
     }
-
-    public function getConfigSkeleton()
-    {
-        return [
-            'version' => '0.0.1',
-            'name' => "My Application",
-            'scm' => "git",
-            'repository' => "",
-            'app_symlinks' => ["/media", "/var", "/sitemaps", "/staging"],
-            'app_shared_dirs' => ["/app/etc", "/sitemaps", "/media", "/var", "/staging"],
-            'app_shared_files' => ["/app/etc/local.xml", "/robots.txt"],
-            'keep_releases' => 3,
-            'stages' => [],
-        ];
-    }
-
-    public function getStageSkeleton()
-    {
-        return [
-            'version' => '0.0.1',
-            'deploy_to' => '',
-            'branch' => '',
-            'ssh_user' => '',
-            'host' => '',
-        ];
-    }
 }

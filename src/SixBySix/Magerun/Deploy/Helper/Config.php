@@ -4,7 +4,7 @@ namespace SixBySix\Magerun\Deploy\Helper;
 
 use SixBySix\Magerun\Deploy\Exception;
 
-class Config
+class Config extends \ArrayObject
 {
     const SCM_GIT = 'git';
     const SCM_HG = 'hg';
@@ -21,6 +21,8 @@ class Config
 
     public function __construct()
     {
+        parent::__construct();
+
         $this->helper = new Capistrano();
         $this->load();
     }
@@ -87,7 +89,7 @@ class Config
         $this->data->scm = $scm;
     }
 
-    public function getScmName()
+    public function getScm()
     {
         return $this->data->scm;
     }
@@ -127,6 +129,16 @@ class Config
         $this->data->app_shared_files = $files;
     }
 
+    public function getReleaseLimit()
+    {
+        return $this->data->keep_releases;
+    }
+
+    public function setReleaseLimit($limit)
+    {
+        $this->data->keep_releases = (int) $limit;
+    }
+
     public function getStages()
     {
         return $this->data->stages;
@@ -135,6 +147,11 @@ class Config
     public function setStages(array $stages)
     {
         $this->data->stages = $stages;
+    }
+
+    public function getStageNames()
+    {
+        return array_keys((array) $this->data->stages);
     }
 
     public function save()

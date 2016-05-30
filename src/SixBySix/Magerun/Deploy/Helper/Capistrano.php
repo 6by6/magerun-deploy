@@ -34,6 +34,11 @@ class Capistrano
         return is_dir($this->getCapDir());
     }
 
+    public function getDeployRbFilename()
+    {
+        return $this->getCapDir() . DS . 'deploy.rb';
+    }
+
     public function getStageDir()
     {
         return $this->getCapDir() . DS . 'deploy';

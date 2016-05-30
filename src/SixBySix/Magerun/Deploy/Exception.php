@@ -10,4 +10,6 @@ class Exception extends \Exception
     const CONFIG_INVALID_FORMAT = 201;
     const CONFIG_OUT_OF_DATE = 202;
     const CONFIG_INVALID_VALUE = 203;
+
+    const IO_ERROR = 300;
 }

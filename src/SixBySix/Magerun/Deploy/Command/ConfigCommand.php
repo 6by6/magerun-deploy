@@ -14,6 +14,7 @@ use SixBySix\Magerun\Deploy\Helper\Config as ConfigHelper;
 use SixBySix\Magerun\Deploy\Helper\Config\ArrayModifier;
 use SixBySix\Magerun\Deploy\Helper\Config\StageModifier;
 use Symfony\Component\Console\Question\ChoiceQuestion;
+use Symfony\Component\Console\Question\ConfirmationQuestion;
 use Symfony\Component\Console\Question\Question;
 
 class ConfigCommand extends AbstractCommand
@@ -84,9 +85,9 @@ class ConfigCommand extends AbstractCommand
         $this->config->setApplicationName($name);
 
         $q = new ChoiceQuestion(
-            $this->formatQuestionText("Which version control system are you using?", $config->getScmName()),
+            $this->formatQuestionText("Which version control system are you using?", $config->getScm()),
             $config->getScmChoices(),
-            $config->getScmName()
+            $config->getScm()
         );
 
         $scm = $helper->ask($input, $output, $q);
@@ -99,6 +100,14 @@ class ConfigCommand extends AbstractCommand
         $url = $helper->ask($input, $output, $q);
         $this->config->setRepositoryUrl($url);
 
+        $q = new Question(
+            $this->formatQuestionText("How many releases should be kept?", $config->getReleaseLimit()),
+            $config->getReleaseLimit()
+        );
+
+        $keepReleases = $helper->ask($input, $output, $q);
+        $this->config->setReleaseLimit($keepReleases);
+
         $output->writeln('');
         $output->writeln('<style=bold>-- Shared Directories --</>');
         $output->writeln('Shared directories are used for dirs that should');
@@ -110,7 +119,7 @@ class ConfigCommand extends AbstractCommand
         $this->config->setSharedDirs($sharedDirs);
 
         $output->writeln('');
-        $output->writeln('<style=bold>-- Shared Files --</>');
+        $output->writeln('<bg=blue;fg=white;style=bold>   Shared Files   </>');
         $output->writeln('Shared files are used for files that should');
         $output->writeln('persist between deploys e.g. robots.txt, ');
         $output->writeln('database settings etc.');
@@ -120,13 +129,21 @@ class ConfigCommand extends AbstractCommand
         $this->config->setSharedFiles($sharedFiles);
 
         $output->writeln('');
-        $output->writeln('<style=bold>-- Stages --</>');
+        $output->writeln('<fg=blue;style=bold>Stages</>');
+        $output->writeln('<fg=blue;style=bold>----------</>');
         $output->writeln('A stage is a target for deployments');
 
         $modProc = new StageModifier($input, $output, $helper, $config->getStages());
         $modProc->setSkeleton($config->getStageSkeleton());
         $stages = $modProc->run();
         $this->config->setStages($stages);
+
+        $q = new ConfirmationQuestion(
+            $this->formatQuestionText("Please enter your VC repo?", $config->getRepositoryUrl()),
+            $config->getRepositoryUrl()
+        );
+
+        $helper->ask($output, $input, $q);
 
         $this->config->save();
     }

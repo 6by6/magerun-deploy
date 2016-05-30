@@ -1,0 +1,5 @@
+set :deploy_to, "{{ stage.deploy_to }}"
+set :branch, '{{ stage.branch }}'
+set :user, '{{ stage.user }}'
+
+server '{{ stage.host }}', :app

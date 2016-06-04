@@ -7,6 +7,7 @@ use SixBySix\Magerun\Deploy\Exception;
 use SixBySix\Magerun\Deploy\Helper\Config;
 use Symfony\Component\Console\Formatter\OutputFormatter;
 use Symfony\Component\Console\Helper\QuestionHelper;
+use Symfony\Component\Console\Input\ArrayInput;
 use Symfony\Component\Console\Input\InputInterface;
 use Symfony\Component\Console\Output\OutputInterface;
 use SixBySix\Magerun\Deploy\Helper\Capistrano as CapHelper;
@@ -138,14 +139,11 @@ class ConfigCommand extends AbstractCommand
         $stages = $modProc->run();
         $this->config->setStages($stages);
 
-        $q = new ConfirmationQuestion(
-            $this->formatQuestionText("Please enter your VC repo?", $config->getRepositoryUrl()),
-            $config->getRepositoryUrl()
-        );
-
-        $helper->ask($output, $input, $q);
-
         $this->config->save();
+
+        $cmd = $this->getApplication()->find('deploy:generate');
+        $cmd->run(new ArrayInput(['']), $output);
+
     }
 
     protected function formatQuestionText($question, $currentValue)

@@ -14,6 +14,7 @@ class ArrayModifier
     const ACTION_REMOVE = 'remove';
     const ACTION_LIST = 'list';
     const ACTION_CONTINUE = 'save';
+    const ACTION_EDIT = 'edit';
 
     /** @var array  */
     protected $list;
@@ -46,6 +47,8 @@ class ArrayModifier
                 break;
             } elseif ($choice == self::ACTION_ADD) {
                 $this->addFlow();
+            } elseif ($choice == self::ACTION_EDIT) {
+                $this->editFlow();
             } elseif ($choice == self::ACTION_REMOVE) {
                 $this->removeFlow();
             } elseif ($choice == self::ACTION_LIST) {
@@ -83,6 +86,16 @@ class ArrayModifier
             $this->list[] = $value;
         } else {
             $this->output->writeln("$value is already included");
+        }
+    }
+
+    protected function editFlow()
+    {
+        $q = new ChoiceQuestion("Please enter value to edit: ", $this->getChoices());
+        $value = $this->helper->ask($this->input, $this->output, $q);
+        if (($idx = array_search($value, $this->getChoices())) !== false) {
+
+            unset($this->list[$idx]);
         }
     }
 

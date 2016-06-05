@@ -223,15 +223,5 @@ class ConfigCommand extends AbstractCommand
         return $text;
     }
 
-    protected function setStyles(OutputInterface $output)
-    {
-        $style = new OutputFormatterStyle('white', null, array('bold'));
-        $output->getFormatter()->setStyle('label', $style);
 
-        $style = new OutputFormatterStyle('blue', null, array('bold', 'underscore'));
-        $output->getFormatter()->setStyle('subtitle', $style);
-
-        $style = new OutputFormatterStyle('yellow', null, array('bold'));
-        $output->getFormatter()->setStyle('warning', $style);
-    }
 }

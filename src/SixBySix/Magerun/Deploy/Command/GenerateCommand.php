@@ -27,20 +27,19 @@ class GenerateCommand extends AbstractCommand
      */
     protected function execute(InputInterface $input, OutputInterface $output)
     {
-        $this->writeHeader("Generate Capistrano Files", $output);
-        $output->setFormatter(new OutputFormatter(true));
+        //$output->setFormatter(new OutputFormatter(true));
+        $this->setStyles($output);
 
         if ($this->initMagento()) {
             $this->detectMagento($output);
 
             $writer = new Writer(new Config(), new Capistrano());
-
             try {
-                $writer->writeDeployRb();
-                $writer->flushStageFiles();
-                $writer->writeStageFiles();
+                $writer->writeDeployRb($output);
+                $writer->flushStageFiles($output);
+                $writer->writeStageFiles($output);
             } catch (Exception $e) {
-                $output->writeln('FAIL!: ' . $e->getMessage());
+                $output->writeln('<error>FAIL!: ' . $e->getMessage() . '</>');
                 return 1;
             }
 

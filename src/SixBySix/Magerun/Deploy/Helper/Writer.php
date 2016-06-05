@@ -4,6 +4,8 @@ namespace SixBySix\Magerun\Deploy\Helper;
 
 use N98\Util\Template\Twig;
 use SixBySix\Magerun\Deploy\Exception;
+use Symfony\Component\Console\Output\Output;
+use Symfony\Component\Console\Output\OutputInterface;
 
 class Writer
 {
@@ -25,7 +27,7 @@ class Writer
         ]);
     }
 
-    public function writeDeployRb()
+    public function writeDeployRb(OutputInterface $output = null)
     {
         /** @var string $content */
         $content = $this->twig->render('deploy.rb.twig', [
@@ -36,20 +38,22 @@ class Writer
         $filename = $this->capHelper->getDeployRbFilename();
 
         $this->writeToFile($filename, $content);
+        $output->writeln("<success>Wrote {$filename}</success>");
     }
 
-    public function flushStageFiles()
+    public function flushStageFiles(OutputInterface $output = null)
     {
         /** @var string $pattern */
         $pattern = $this->capHelper->getStageDir() . DIRECTORY_SEPARATOR . "*.rb";
 
         foreach (glob($pattern) as $filename) {
             unlink($filename);
+            $output->writeln("<success>Removed {$filename}</>");
         }
 
     }
 
-    public function writeStageFiles()
+    public function writeStageFiles(OutputInterface $output = null)
     {
         /** @var \stdClass[] $stages */
         $stages = (array) $this->configHelper->getStages();
@@ -66,6 +70,8 @@ class Writer
             ]);
 
             $this->writeToFile($filename, $content);
+
+            $output->writeln("<success>Wrote {$filename}</>");
         }
     }
 

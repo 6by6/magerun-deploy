@@ -111,7 +111,7 @@ class Config extends \ArrayObject
 
     public function getSharedDirs()
     {
-        return (array) $this->data->app_shared_dirs;
+        return array_values((array) $this->data->app_shared_dirs);
     }
 
     public function setSharedDirs(array $dirs)
@@ -121,7 +121,7 @@ class Config extends \ArrayObject
 
     public function getSharedFiles()
     {
-        return (array) $this->data->app_shared_files;
+        return array_values((array) $this->data->app_shared_files);
     }
 
     public function setSharedFiles(array $files)

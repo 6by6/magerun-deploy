@@ -9,13 +9,26 @@ set :scm, :{{ config.getScm|e }}
 set  :keep_releases,  {{ config.getReleaseLimit }}
 after "deploy:update", "deploy:cleanup"
 
+
+#default_run_options[:forward_agent] = true
+
+set :ssh_options, {
+  :forward_agent => true,
+}
+
 default_run_options[:pty] = true
 set :use_sudo, false
 
 set :app_shared_dirs, {{ config.getSharedDirs|json_encode()|raw }}
+set :app_symlinks, {{ config.getSharedDirs|json_encode()|raw }}
 set :app_shared_files, {{ config.getSharedFiles|json_encode()|raw }}
 
 after "deploy:update_code" do
   # Run preprocessing scripts etc.
   # e.g. run("cd #{release_path}; composer update")
+end
+
+
+before "deploy:compile_assets" do
+  run("touch hello.txt")
 end

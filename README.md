@@ -99,6 +99,7 @@ $ n98-magerun.phar deploy:generate
 With configuration out the way all that's left is initiating a deployment. 
 
 From your codebase root:
+
 1. `$ bundle --path=.bundle` (installs gems locally)
 
 2. `$ bundle exec cap $STAGE_NAME deploy:setup` (creates shared files etc.)

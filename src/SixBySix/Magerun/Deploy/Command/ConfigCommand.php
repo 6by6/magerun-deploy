@@ -26,9 +26,17 @@ use Symfony\Component\Console\Question\Question;
  */
 class ConfigCommand extends AbstractCommand
 {
+    const ARG_UPDATE = 'update';
+
     const OPTION_SET_NAME = 'name';
     const OPTION_SET_SCM = 'scm';
-
+    const OPTION_SET_REPO = 'repo';
+    const OPTION_SET_KEEP_RELEASES = 'keep_releases';
+    const OPTION_INC_DEFAULT_SHARED_DIRS = 'default_shared_dirs';
+    const OPTION_SET_SHARED_DIRS = 'shared_dirs';
+    const OPTION_INC_DEFAULT_SHARED_FILES = 'default_shared_files';
+    const OPTION_SET_SHARED_FILES = 'shared_files';
+    const OPTION_FORCE_SAVE = 'force_save';
 
     /** @var CapHelper */
     protected $helper;
@@ -41,12 +49,67 @@ class ConfigCommand extends AbstractCommand
         $this
             ->setName('deploy:config')
             ->setDescription('Show Capistrano configuration')
-            ->addOption(self::OPTION_SET_NAME, null, InputOption::VALUE_OPTIONAL, 'Set application name')
+            ->addArgument(
+                self::ARG_UPDATE,
+                InputArgument::OPTIONAL,
+                'Update configuration values',
+                false
+            )
+            ->addOption(
+                self::OPTION_SET_NAME,
+                null,
+                InputOption::VALUE_REQUIRED,
+                'Set application name'
+            )
+            ->addOption(
+                self::OPTION_FORCE_SAVE,
+                'f',
+                InputOption::VALUE_NONE,
+                'Save changes without confirming'
+            )
             ->addOption(
                 self::OPTION_SET_SCM,
+                's',
+                InputOption::VALUE_REQUIRED,
+                'Set SCM'
+            )
+            ->addOption(
+                self::OPTION_SET_REPO,
+                'r',
+                InputOption::VALUE_REQUIRED,
+                'Set repository URL'
+            )
+            ->addOption(
+                self::OPTION_SET_KEEP_RELEASES,
+                'k',
+                InputOption::VALUE_REQUIRED,
+                'Number of releases to keep'
+            )
+            ->addOption(
+                self::OPTION_INC_DEFAULT_SHARED_DIRS,
                 null,
                 InputOption::VALUE_OPTIONAL,
-                'Set SCM'
+                'Include default shared directories',
+                true
+            )
+            ->addOption(
+                self::OPTION_SET_SHARED_DIRS,
+                null,
+                InputOption::VALUE_REQUIRED | InputOption::VALUE_IS_ARRAY,
+                'Set shared directories'
+            )
+            ->addOption(
+                self::OPTION_INC_DEFAULT_SHARED_FILES,
+                null,
+                InputOption::VALUE_OPTIONAL,
+                'Include default shared files',
+                true
+            )
+            ->addOption(
+                self::OPTION_SET_SHARED_FILES,
+                null,
+                InputOption::VALUE_REQUIRED | InputOption::VALUE_IS_ARRAY,
+                'Set shared files'
             )
             ;
     }
@@ -58,21 +121,46 @@ class ConfigCommand extends AbstractCommand
      */
     protected function execute(InputInterface $input, OutputInterface $output)
     {
-        $this->writeHeader("Capistrano Configuration", $output);
         $this->setStyles($output);
+
+        /** @var QuestionHelper $question */
+        $question = $this->getHelper('question');
 
         $this->detectMagento($output);
         if ($this->initMagento()) {
             $this->config = new ConfigHelper();
 
-            if ($name = $input->getOption(self::OPTION_SET_NAME)) {
-                $this->config->setApplicationName($name);
-            }
+            if ($input->getArgument(self::ARG_UPDATE)) {
+                if ($name = $input->getOption(self::OPTION_SET_NAME)) {
+                    $this->config->setApplicationName($name);
+                }
 
-            if ($scm = $input->getOption(self::OPTION_SET_SCM)) {
-                $this->config->setScm($scm);
-            }
+                if ($scm = $input->getOption(self::OPTION_SET_SCM)) {
+                    $this->config->setScm($scm);
+                }
 
+                if ($repo = $input->getOption(self::OPTION_SET_REPO)) {
+                    $this->config->setRepositoryUrl($repo);
+                }
+
+                if ($keepReleases = $input->getOption(self::OPTION_SET_KEEP_RELEASES)) {
+                    $this->config->setReleaseLimit($keepReleases);
+                }
+
+                $sharedDirs = $input->getOption(self::OPTION_SET_SHARED_DIRS);
+                if ($input->getOption(self::OPTION_INC_DEFAULT_SHARED_DIRS)) {
+                    $sharedDirs = array_merge($sharedDirs, $this->config->getDefaultSharedDirs());
+                    $sharedDirs = array_unique($sharedDirs);
+                }
+                $this->config->setSharedDirs($sharedDirs);
+
+                $sharedFiles = $input->getOption(self::OPTION_SET_SHARED_FILES);
+                if ($input->getOption(self::OPTION_INC_DEFAULT_SHARED_FILES)) {
+                    $sharedFiles = array_merge($sharedFiles, $this->config->getDefaultSharedFiles());
+                    $sharedFiles = array_unique($sharedFiles);
+                }
+                $this->config->setSharedFiles($sharedFiles);
+            }
 
             $output->writeln("<label>Name:</>\t\t" . $this->config->getApplicationName());
             $output->writeln("<label>SCM:</>\t\t" . $this->config->getScm());
@@ -87,7 +175,7 @@ class ConfigCommand extends AbstractCommand
             }
 
             $output->writeln("\n<subtitle>Shared Files</>");
-            if (sizeof($this->config->getSharedDirs())) {
+            if (sizeof($this->config->getSharedFiles())) {
                 $output->writeln(implode(" ", $this->config->getSharedFiles()));
             } else {
                 $output->writeln("<warning>No entries found</>");
@@ -100,7 +188,7 @@ class ConfigCommand extends AbstractCommand
                     $output->writeln(
                         "<label>{$stage->name}:</label> " .
                         "({$stage->branch}) " .
-                        "{$stage->user}@{$stage->host}:{$stage->deploy_to}"
+                        "{$stage->ssh_user}@{$stage->host}:{$stage->deploy_to}"
                     );
                 }
             } else {
@@ -108,6 +196,19 @@ class ConfigCommand extends AbstractCommand
             }
 
             $output->writeln("");
+
+
+            if ($input->getArgument(self::ARG_UPDATE)) {
+                if (!$input->getOption(self::OPTION_FORCE_SAVE)) {
+                    $confirm = new ConfirmationQuestion('Save this configuration?');
+
+                    if (!$question->ask($input, $output, $confirm)) {
+                        return;
+                    }
+                }
+
+                $this->config->save();
+            }
         }
     }
 

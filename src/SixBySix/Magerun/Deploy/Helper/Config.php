@@ -111,22 +111,22 @@ class Config extends \ArrayObject
 
     public function getSharedDirs()
     {
-        return $this->data->app_shared_dirs;
+        return (array) $this->data->app_shared_dirs;
     }
 
     public function setSharedDirs(array $dirs)
     {
-        $this->data->app_shared_dirs = $dirs;
+        $this->data->app_shared_dirs = (array) $dirs;
     }
 
     public function getSharedFiles()
     {
-        return $this->data->app_shared_files;
+        return (array) $this->data->app_shared_files;
     }
 
     public function setSharedFiles(array $files)
     {
-        $this->data->app_shared_files = $files;
+        $this->data->app_shared_files = (array) $files;
     }
 
     public function getReleaseLimit()
@@ -191,8 +191,8 @@ class Config extends \ArrayObject
             'name' => "My Application",
             'scm' => "git",
             'repository' => "",
-            'app_shared_dirs' => ["/app/etc", "/sitemaps", "/media", "/var", "/staging"],
-            'app_shared_files' => ["/app/etc/local.xml", "/robots.txt"],
+            'app_shared_dirs' => $this->getDefaultSharedDirs(),
+            'app_shared_files' => $this->getDefaultSharedFiles(),
             'keep_releases' => 3,
             'stages' => [],
         ];
@@ -208,5 +208,15 @@ class Config extends \ArrayObject
             'ssh_user' => '',
             'host' => '',
         ];
+    }
+
+    public function getDefaultSharedDirs()
+    {
+        return ["/app/etc", "/sitemaps", "/media", "/var", "/staging"];
+    }
+
+    public function getDefaultSharedFiles()
+    {
+        return ["/app/etc/local.xml", "/robots.txt"];
     }
 }

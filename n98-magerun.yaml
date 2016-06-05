@@ -4,6 +4,7 @@ autoloaders:
 commands:
   customCommands:
     - SixBySix\Magerun\Deploy\Command\ConfigCommand
+    - SixBySix\Magerun\Deploy\Command\ConfigStageCommand
     - SixBySix\Magerun\Deploy\Command\ConfigWizardCommand
     - SixBySix\Magerun\Deploy\Command\GenerateCommand
     - SixBySix\Magerun\Deploy\Command\SetupCommand

@@ -15,6 +15,7 @@ class ArrayModifier
     const ACTION_LIST = 'list';
     const ACTION_CONTINUE = 'save';
     const ACTION_EDIT = 'edit';
+    const ACTION_IMPORT_DEFAULTS = 'use_defaults';
 
     /** @var array  */
     protected $list;
@@ -25,15 +26,24 @@ class ArrayModifier
     /** @var  OutputInterface */
     protected $output;
 
+    /** @var  mixed[] */
+    protected $defaults;
+
     /** @var   */
     protected $helper;
 
-    public function __construct(InputInterface $input, OutputInterface $output, $helper, array $list = [])
-    {
+    public function __construct(
+        InputInterface $input,
+        OutputInterface $output,
+        $helper,
+        array $list = [],
+        array $defaults = []
+    ) {
         $this->list = $list;
         $this->input = $input;
         $this->output = $output;
         $this->helper = $helper;
+        $this->defaults = $defaults;
     }
 
     public function run()
@@ -49,6 +59,8 @@ class ArrayModifier
                 $this->addFlow();
             } elseif ($choice == self::ACTION_EDIT) {
                 $this->editFlow();
+            } elseif (sizeof($this->defaults) && $choice == self::ACTION_IMPORT_DEFAULTS) {
+                $this->list = array_merge($this->list, $this->defaults);
             } elseif ($choice == self::ACTION_REMOVE) {
                 $this->removeFlow();
             } elseif ($choice == self::ACTION_LIST) {
@@ -70,6 +82,11 @@ class ArrayModifier
             }
         } else {
             $this->output->writeln(" <fg=red>No entries found</>");
+        }
+
+        if (sizeof($this->defaults)) {
+            $this->output->writeln("");
+            $this->output->writeln(sprintf("(defaults: %s)", implode(", ", $this->defaults)));
         }
     }
 
@@ -94,7 +111,6 @@ class ArrayModifier
         $q = new ChoiceQuestion("Please enter value to edit: ", $this->getChoices());
         $value = $this->helper->ask($this->input, $this->output, $q);
         if (($idx = array_search($value, $this->getChoices())) !== false) {
-
             unset($this->list[$idx]);
         }
     }
@@ -116,10 +132,21 @@ class ArrayModifier
     protected function promptAction()
     {
         $this->output->writeln('');
-        $q = new ChoiceQuestion(
-            "Perform action:",
-            [self::ACTION_ADD, self::ACTION_REMOVE, self::ACTION_LIST, self::ACTION_CONTINUE]
-        );
+
+        /** @var string[] $actions */
+        $actions = [
+            self::ACTION_ADD => "Add entry/entries",
+            self::ACTION_EDIT => "Edit entry/entries",
+            self::ACTION_REMOVE => "Remove entry/entries",
+            self::ACTION_LIST => "Show current entries",
+        ];
+
+        if (sizeof($this->defaults)) {
+            $actions[self::ACTION_IMPORT_DEFAULTS] = sprintf("Import Defaults (%s)", implode(", ", $this->defaults));
+        }
+        $actions[self::ACTION_CONTINUE] = "Continue...";
+
+        $q = new ChoiceQuestion("Perform action: ", $actions);
 
         return $this->helper->ask($this->input, $this->output, $q);
     }

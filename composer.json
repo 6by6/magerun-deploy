@@ -11,9 +11,14 @@
     "minimum-stability": "dev",
     "require-dev": {
         "n98/magerun": "^1.97",
-        "phpunit/phpunit": "^5.3"
+        "phpunit/phpunit": "~4.1"
     },
     "require": {
         "twig/twig": "^1.24"
+    },
+    "autoload" : {
+        "psr-0" : {
+            "SixBySix" : "src/"
+        }
     }
 }

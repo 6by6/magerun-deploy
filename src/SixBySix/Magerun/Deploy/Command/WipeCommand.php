@@ -6,6 +6,7 @@ use N98\Magento\Command\AbstractMagentoCommand;
 use SixBySix\Magerun\Deploy\Exception;
 use Symfony\Component\Console\Formatter\OutputFormatter;
 use Symfony\Component\Console\Input\InputInterface;
+use Symfony\Component\Console\Input\InputOption;
 use Symfony\Component\Console\Output\OutputInterface;
 use Symfony\Component\Console\Question\ConfirmationQuestion;
 use SixBySix\Magerun\Deploy\Helper\Capistrano as CapHelper;
@@ -19,7 +20,8 @@ class WipeCommand extends AbstractCommand
     {
         $this
             ->setName('deploy:wipe')
-            ->setDescription('Wipe all capistrano files');
+            ->setDescription('Wipe all capistrano files')
+            ->addOption('plain', null, InputOption::VALUE_NONE, 'Plain output');
     }
 
     /**
@@ -29,8 +31,8 @@ class WipeCommand extends AbstractCommand
      */
     protected function execute(InputInterface $input, OutputInterface $output)
     {
-        $this->writeHeader("Wipe Capistrano", $output);
         $output->setFormatter(new OutputFormatter(true));
+        $output->setDecorated(false);
 
         $this->detectMagento($output);
 
@@ -60,15 +62,22 @@ class WipeCommand extends AbstractCommand
 
             $output->writeln("");
 
-            /** @var string $path */
-            foreach ($info['found'] as $path) {
+            /** @var string[] $toDelete */
+            $toDelete = [
+                $this->helper->getCapfileFilename(),
+                $this->helper->getGemfileFilename(),
+                $this->helper->getCapDir(),
+            ];
 
+
+            /** @var string $path */
+            foreach ($toDelete as $path) {
                 if (!file_exists($path)) {
                     continue;
                 }
 
                 /** @var boolean $result */
-                $result = (is_dir($path) ? rmdir($path) : unlink($path));
+                $result = (is_dir($path)) ? $this->helper->rmdir($path) : unlink($path);
 
                 if ($result) {
                     $output->writeln(" <fg=green;style=bold>$this->symCheck</> Deleted $path");
@@ -76,7 +85,6 @@ class WipeCommand extends AbstractCommand
                     $output->writeln(" <fg=red;style=bold>$this->symCross</> Could not delete $path");
                 }
             }
-
         }
 
         $output->writeln("");

@@ -39,8 +39,6 @@ class ConfigWizardCommand extends ConfigCommand
      */
     protected function execute(InputInterface $input, OutputInterface $output)
     {
-        $this->writeHeader("Capistrano Configuration", $output);
-
         $this->detectMagento($output);
         if ($this->initMagento()) {
             $this->helper = new CapHelper();
@@ -105,7 +103,14 @@ class ConfigWizardCommand extends ConfigCommand
         $output->writeln('persist between deploys e.g. sessions, logs, word');
         $output->writeln('press config etc.');
 
-        $modProc = new ArrayModifier($input, $output, $helper, $config->getSharedDirs());
+        $modProc = new ArrayModifier(
+            $input,
+            $output,
+            $helper,
+            $config->getSharedDirs(),
+            $config->getDefaultSharedDirs()
+        );
+
         $sharedDirs = $modProc->run();
         $this->config->setSharedDirs($sharedDirs);
 
@@ -115,7 +120,14 @@ class ConfigWizardCommand extends ConfigCommand
         $output->writeln('persist between deploys e.g. robots.txt, ');
         $output->writeln('database settings etc.');
 
-        $modProc = new ArrayModifier($input, $output, $helper, $config->getSharedFiles());
+        $modProc = new ArrayModifier(
+            $input,
+            $output,
+            $helper,
+            $config->getSharedFiles(),
+            $config->getDefaultSharedFiles()
+        );
+
         $sharedFiles = $modProc->run();
         $this->config->setSharedFiles($sharedFiles);
 

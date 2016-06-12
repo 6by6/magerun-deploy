@@ -82,7 +82,10 @@ class Config extends \ArrayObject
 
     public function setScm($scm)
     {
-        if (!in_array($scm, $this->getScmChoices())) {
+        /** @var string[] $choices */
+        $choices = $this->getScmChoices();
+
+        if (!isset($choices[$scm])) {
             throw new Exception("$scm is not a valid SCM", Exception::CONFIG_INVALID_VALUE);
         }
 
@@ -106,7 +109,11 @@ class Config extends \ArrayObject
 
     public function getScmChoices()
     {
-        return [self::SCM_GIT, self::SCM_SVN, self::SCM_HG];
+        return [
+            self::SCM_GIT => "Git",
+            self::SCM_SVN => "Subversion",
+            self::SCM_HG => "Mercurial",
+        ];
     }
 
     public function getSharedDirs()

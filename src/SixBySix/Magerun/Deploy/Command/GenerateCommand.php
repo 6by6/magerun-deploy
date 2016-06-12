@@ -27,7 +27,6 @@ class GenerateCommand extends AbstractCommand
      */
     protected function execute(InputInterface $input, OutputInterface $output)
     {
-        //$output->setFormatter(new OutputFormatter(true));
         $this->setStyles($output);
 
         if ($this->initMagento()) {
@@ -46,5 +45,10 @@ class GenerateCommand extends AbstractCommand
         }
 
         $output->writeln("");
+    }
+
+    public function runCommand(InputInterface $input, OutputInterface $outputInterface)
+    {
+
     }
 }

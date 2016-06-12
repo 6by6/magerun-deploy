@@ -113,4 +113,21 @@ class Capistrano
 
         return $info;
     }
+
+    public function rmdir($dir)
+    {
+        if (is_dir($dir)) {
+            $objects = scandir($dir);
+            foreach ($objects as $object) {
+                if (!in_array($object, [".", ".."])) {
+                    if (is_dir("{$dir}/{$object}")) {
+                        $this->rmdir("{$dir}/{$object}");
+                    } else {
+                        unlink("{$dir}/{$object}");
+                    }
+                }
+            }
+            return rmdir($dir);
+        }
+    }
 }

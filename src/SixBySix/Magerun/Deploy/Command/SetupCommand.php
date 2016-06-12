@@ -28,7 +28,6 @@ class SetupCommand extends AbstractCommand
      */
     protected function execute(InputInterface $input, OutputInterface $output)
     {
-        $this->writeHeader("Setup Capistrano", $output);
         $output->setFormatter(new OutputFormatter(true));
 
         $this->detectMagento($output);
@@ -36,7 +35,6 @@ class SetupCommand extends AbstractCommand
         $this->helper = new CapHelper();
 
         if ($this->initMagento()) {
-
             $output->writeln("Inspecting codebase for existing Cap files...");
 
             /** @var mixed[] $info */
@@ -68,6 +66,8 @@ class SetupCommand extends AbstractCommand
                 $output->writeln(" <fg=green>$this->symCheck</> Created {$this->helper->getStageDir()}");
                 $this->writeConfigFile();
                 $output->writeln(" <fg=green>$this->symCheck</> Created {$this->helper->getConfigFilename()}");
+
+
             } catch (Exception $e) {
                 $output->writeln(" <fg=red>$this->symCross</> {$e->getMessage()}");
             }
@@ -76,6 +76,11 @@ class SetupCommand extends AbstractCommand
         }
     }
 
+    /**
+     * Create cap + stage directory (recursive mkdir)
+     *
+     * @throws Exception
+     */
     protected function mkdirs()
     {
         /** @var string $dirName */
@@ -89,6 +94,13 @@ class SetupCommand extends AbstractCommand
         }
     }
 
+    /**
+     * Write configuration file
+     *
+     * @param $filename
+     * @param $content
+     * @throws Exception
+     */
     protected function writeFile($filename, $content)
     {
         /** @var resource $fh */
@@ -105,6 +117,11 @@ class SetupCommand extends AbstractCommand
         fclose($fh);
     }
 
+    /**
+     * Write Gemfile for ruby dependencies
+     * @todo Allow merge with existing gemfile
+     * @throws Exception
+     */
     protected function writeGemfile()
     {
         /** @var string $content */
@@ -119,6 +136,10 @@ ruby;
         $this->writeFile($this->helper->getGemfileFilename(), $content);
     }
 
+    /**
+     * Write Capfile that controls deploys
+     * @throws Exception
+     */
     protected function writeCapfile()
     {
         $content = <<<ruby
@@ -131,12 +152,13 @@ ruby;
         $this->writeFile($this->helper->getCapfileFilename(), $content);
     }
 
+    /**
+     * Writes placeholder configuration file
+     * @throws Exception
+     */
     protected function writeConfigFile()
     {
-        $content = <<<json
-{
-}
-json;
+        $content = "{}";
 
         $this->writeFile($this->helper->getConfigFilename(), $content);
     }

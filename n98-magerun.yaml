@@ -1,5 +1,5 @@
 autoloaders:
-  SixBySix: %module%/src
+  SixBySix\Magerun\Deploy: %module%/src
 
 commands:
   customCommands:
